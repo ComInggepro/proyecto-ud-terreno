@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0d1f35">
+<title>Proyecto UD — INGGEPRO</title>
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d1f35;--bg2:#122540;--bg3:#1a3050;--bg4:#091728;
+  --accent:#00c896;--adim:rgba(0,200,150,0.1);--aborder:rgba(0,200,150,0.3);
+  --blue:#3b82f6;--bdim:rgba(59,130,246,0.1);--bborder:rgba(59,130,246,0.3);
+  --warn:#f59e0b;--wdim:rgba(245,158,11,0.1);--wborder:rgba(245,158,11,0.3);
+  --danger:#ef4444;--ddim:rgba(239,68,68,0.1);
+  --ok:#10b981;--odim:rgba(16,185,129,0.1);
+  --purple:#a855f7;--pdim:rgba(168,85,247,0.1);--pborder:rgba(168,85,247,0.3);
+  --text:#e8f0fe;--text2:#7a9cc0;--text3:#364e68;
+  --bdr:rgba(255,255,255,0.07);--bdr2:rgba(255,255,255,0.12);
+  --r:14px;--rsm:9px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text)}
+#app{height:100%;display:flex;flex-direction:column;max-width:520px;margin:0 auto}
+
+/* ── TOPBAR ── */
+.topbar{background:var(--bg2);border-bottom:1px solid var(--bdr);padding:10px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+/* INGGEPRO logo SVG inline */
+.logo-inggepro{flex-shrink:0;height:36px;width:auto}
+.topbar-title{font-size:15px;font-weight:600;flex:1}
+/* Essbio logo placeholder */
+.logo-essbio{flex-shrink:0;height:32px;width:auto}
+.conn{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);background:var(--bg3);padding:3px 9px;border-radius:20px;border:1px solid var(--bdr)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--ok);flex-shrink:0}
+.dot.off{background:var(--warn)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+.dot.live{animation:blink 2.5s infinite}
+.offbanner{background:var(--wdim);border-bottom:1px solid rgba(245,158,11,.2);padding:6px 16px;font-size:12px;color:var(--warn);text-align:center;display:none}
+.offbanner.show{display:block}
+
+/* ── CONTENT ── */
+.content{flex:1;overflow-y:auto;padding:14px 16px;overscroll-behavior:contain}
+.content::-webkit-scrollbar{width:3px}
+.content::-webkit-scrollbar-thumb{background:var(--text3);border-radius:2px}
+.screen{display:none}
+.screen.active{display:block}
+
+/* ── DASHBOARD / HOME ── */
+.dash-greeting{margin-bottom:16px}
+.dash-greeting h2{font-size:20px;font-weight:600;margin-bottom:2px}
+.dash-greeting p{font-size:12px;color:var(--text2)}
+.dash-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-bottom:14px}
+.dash-stat{background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--rsm);padding:12px 14px;display:flex;flex-direction:column;gap:3px}
+.dash-stat .ds-n{font-size:26px;font-weight:600;font-family:'DM Mono',monospace}
+.dash-stat .ds-l{font-size:11px;color:var(--text2)}
+.dash-stat.col-ok .ds-n{color:var(--ok)}
+.dash-stat.col-warn .ds-n{color:var(--warn)}
+.dash-stat.col-blue .ds-n{color:var(--blue)}
+.dash-stat.col-accent .ds-n{color:var(--accent)}
+.dash-progress{background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--rsm);padding:14px;margin-bottom:14px}
+.dp-label{font-size:11px;color:var(--text2);margin-bottom:8px;display:flex;justify-content:space-between}
+.dp-bar{height:8px;background:var(--bg4);border-radius:4px;overflow:hidden}
+.dp-fill{height:100%;background:var(--accent);border-radius:4px;transition:width .4s}
+.sec-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.09em;margin-bottom:9px}
+.btn-new{width:100%;background:var(--accent);color:#071420;border:none;border-radius:var(--r);padding:13px;font-size:15px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;margin-bottom:14px}
+.btn-new:active{opacity:.83}
+
+/* ── TARJETAS REGISTROS ── */
+.rec-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--r);padding:13px 14px;margin-bottom:8px}
+.rc-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:4px}
+.rc-dir{font-size:14px;font-weight:500;flex:1;line-height:1.3}
+.pill{font-size:10px;font-weight:500;padding:3px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.pill-ok{background:var(--odim);color:var(--ok)}
+.pill-pend{background:var(--wdim);color:var(--warn)}
+.pill-no{background:var(--ddim);color:var(--danger)}
+.pill-grey{background:rgba(54,78,104,.4);color:var(--text2)}
+.pill-purple{background:var(--pdim);color:var(--purple)}
+.rc-meta{font-size:12px;color:var(--text2)}
+.rc-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.tag{font-size:11px;padding:2px 8px;border-radius:20px}
+.tag-b{background:var(--bdim);color:var(--blue)}
+.tag-g{background:var(--odim);color:var(--ok)}
+.tag-w{background:var(--wdim);color:var(--warn)}
+.tag-p{background:var(--pdim);color:var(--purple)}
+.rc-actions{display:flex;gap:7px;margin-top:9px}
+.rc-btn{flex:1;padding:7px;border-radius:var(--rsm);font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;text-align:center;border:1px solid}
+.rc-btn-analista{background:var(--pdim);color:var(--purple);border-color:var(--pborder)}
+.rc-btn-ficha{background:var(--adim);color:var(--accent);border-color:var(--aborder)}
+.rc-btn-ficha:disabled{opacity:.35;cursor:not-allowed}
+.rc-btn:active{opacity:.7}
+.empty-state{text-align:center;padding:32px 16px}
+.empty-state .ei{font-size:36px;margin-bottom:10px}
+.empty-state p{color:var(--text2);font-size:13px;line-height:1.6}
+
+/* ── FORM ── */
+.form-topbar{display:flex;align-items:center;gap:11px;margin-bottom:14px}
+.back{width:36px;height:36px;background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--rsm);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--text2);flex-shrink:0}
+.back:active{opacity:.7}
+.fhead h3{font-size:15px;font-weight:600}
+.fhead p{font-size:11px;color:var(--text2)}
+
+/* Selector de rol */
+.role-selector{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.role-card{background:var(--bg2);border:2px solid var(--bdr);border-radius:var(--r);padding:16px;text-align:center;cursor:pointer;transition:all .15s}
+.role-card:active{transform:scale(.97)}
+.role-card.selected-terreno{border-color:var(--accent);background:var(--adim)}
+.role-card.selected-analista{border-color:var(--purple);background:var(--pdim)}
+.role-card .ri{font-size:28px;margin-bottom:7px}
+.role-card h4{font-size:14px;font-weight:600;margin-bottom:3px}
+.role-card p{font-size:11px;color:var(--text2);line-height:1.4}
+
+/* Search box */
+.sbox{background:var(--bg2);border:1.5px solid var(--aborder);border-radius:var(--r);padding:13px 14px;margin-bottom:10px}
+.sbox-title{font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:9px}
+.sinput-wrap{position:relative}
+.sinput{width:100%;background:var(--bg4);border:1px solid var(--bdr2);border-radius:var(--rsm);color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;padding:10px 36px 10px 12px;-webkit-appearance:none;appearance:none}
+.sinput:focus{outline:none;border-color:var(--accent)}
+.sclear{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--text2);cursor:pointer;background:none;border:none;display:none;padding:3px}
+.sresults{background:var(--bg3);border:1px solid var(--bdr2);border-radius:var(--rsm);margin-top:6px;display:none;max-height:180px;overflow-y:auto}
+.sri{padding:10px 13px;cursor:pointer;border-bottom:1px solid var(--bdr)}
+.sri:last-child{border-bottom:none}
+.sri:active{background:var(--adim)}
+.sri-dir{font-size:13px;font-weight:500}
+.sri-meta{font-size:11px;color:var(--text2);font-family:'DM Mono',monospace;margin-top:2px}
+.sno{padding:11px 13px;font-size:13px;color:var(--text2);text-align:center}
+
+/* Panel Essbio */
+.essbio-panel{background:var(--bdim);border:1px solid var(--bborder);border-radius:var(--r);padding:13px 14px;margin-bottom:10px;display:none}
+.essbio-panel.show{display:block}
+.ep-title{font-size:10px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:.09em;margin-bottom:9px}
+.ep-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px}
+.ef .el{font-size:10px;color:var(--text2);margin-bottom:1px}
+.ef .ev{font-size:13px;font-weight:500;word-break:break-word}
+.ef.full{grid-column:1/-1}
+
+/* Form sections */
+.fsec{background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--r);padding:14px;margin-bottom:10px}
+.fsec-title{font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px}
+.fsec-title.purple{color:var(--purple)}
+.field{margin-bottom:12px}
+.field:last-child{margin-bottom:0}
+.field label{display:block;font-size:12px;color:var(--text2);margin-bottom:5px;font-weight:500}
+.req{color:var(--accent)}
+.req-p{color:var(--purple)}
+.field input,.field select,.field textarea{
+  width:100%;background:var(--bg4);border:1px solid var(--bdr2);border-radius:var(--rsm);
+  color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;padding:10px 12px;
+  -webkit-appearance:none;appearance:none;transition:border-color .15s
+}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--accent)}
+.field input[readonly]{opacity:.5;cursor:default;background:var(--bg3)}
+.field textarea{resize:none;min-height:76px;line-height:1.5}
+.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%237a9cc0' d='M5 7L1 3h8z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:30px;cursor:pointer}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.auto-badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;color:var(--accent);background:var(--adim);padding:2px 7px;border-radius:10px;margin-left:5px}
+
+/* Fotos */
+.pzone{border:1.5px dashed var(--aborder);border-radius:var(--rsm);padding:15px;text-align:center;cursor:pointer;transition:background .15s;margin-bottom:8px}
+.pzone:active{background:var(--adim)}
+.pzone.req-zone{border-color:var(--wborder)}
+.pzone .pzi{font-size:22px;margin-bottom:3px}
+.pzone .pzl{font-size:12px;color:var(--text2)}
+.pzone .pzr{font-size:11px;color:var(--warn);margin-top:2px}
+.pgrid{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:6px}
+.pwrap{position:relative}
+.pthumb{width:70px;height:70px;object-fit:cover;border-radius:var(--rsm);border:1px solid var(--bdr);cursor:pointer}
+.pdel{position:absolute;top:-5px;right:-5px;width:18px;height:18px;background:var(--danger);border-radius:50%;font-size:11px;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:700}
+.pcnt{font-size:11px}
+.pcnt.ok{color:var(--ok)}
+.pcnt.warn{color:var(--warn)}
+
+/* Spray ref */
+.spray-ref{background:var(--bg3);border:1px solid var(--aborder);border-radius:var(--rsm);padding:10px 12px;margin-bottom:10px;display:flex;align-items:center;gap:9px;cursor:pointer}
+.spray-ref:active{opacity:.8}
+.spray-ref p{font-size:12px;color:var(--text2);line-height:1.5}
+.spray-ref strong{color:var(--accent)}
+
+/* adnote */
+.adnote{background:var(--bdim);border:1px solid var(--bborder);border-radius:var(--r);padding:12px 14px;margin-bottom:10px}
+.adnote-t{font-size:10px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:.09em;margin-bottom:4px}
+.adnote p{font-size:12px;color:var(--text2);line-height:1.5}
+
+.btn-save{width:100%;background:var(--accent);color:#071420;border:none;border-radius:var(--r);padding:14px;font-size:15px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:8px}
+.btn-save:active{opacity:.83}
+.btn-save.purple{background:var(--purple);color:#fff}
+
+/* ── FICHA PDF ── */
+.ficha-topbar{display:flex;align-items:center;gap:11px;margin-bottom:14px}
+.ficha-actions{display:flex;gap:8px;margin-bottom:14px}
+.btn-pdf{flex:1;background:var(--accent);color:#071420;border:none;border-radius:var(--rsm);padding:11px;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer}
+.btn-pdf:active{opacity:.83}
+.btn-back2{flex:1;background:var(--bg3);color:var(--text);border:1px solid var(--bdr2);border-radius:var(--rsm);padding:11px;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer}
+
+/* FICHA - replicar formato Essbio */
+#fichaCard{background:#fff;color:#1a1a1a;border-radius:var(--r);overflow:hidden;font-family:'DM Sans',Arial,sans-serif}
+.fich-header{display:flex;align-items:center;border-bottom:2px solid #1a3a6e;padding:8px 14px;gap:10px;background:#fff}
+.fich-logo-ing{height:44px;width:auto}
+.fich-titulo{flex:1;text-align:center;font-size:13px;font-weight:700;color:#1a1a1a;border:1.5px solid #1a3a6e;padding:8px 14px;border-radius:4px;letter-spacing:.02em}
+.fich-logo-ess{height:40px;width:auto}
+.fich-section{margin:10px 14px}
+.fich-sec-title{background:#d0d0d0;text-align:center;font-size:12px;font-weight:700;padding:5px;margin-bottom:8px;letter-spacing:.05em}
+.fich-grid2{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.fich-row{display:flex;align-items:baseline;gap:6px;padding:3px 0;border-bottom:1px solid #e8e8e8}
+.fich-row:last-child{border-bottom:none}
+.fich-lbl{font-size:11px;font-weight:700;color:#1a1a1a;white-space:nowrap;min-width:110px}
+.fich-val{font-size:11px;color:#333;flex:1}
+.fich-photos-title{background:#eee;text-align:center;font-size:11px;font-weight:700;padding:4px;margin-bottom:2px;letter-spacing:.04em}
+.fich-photos-sub{text-align:center;font-size:10px;font-weight:600;color:#333;margin-bottom:6px}
+.fich-photos-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 4px}
+.fich-photo-box{border:1px solid #999}
+.fich-photo-label{background:#f0f0f0;text-align:center;font-size:10px;font-weight:700;padding:3px;border-bottom:1px solid #999}
+.fich-photo-img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+.fich-photo-empty{width:100%;aspect-ratio:4/3;background:#fafafa;display:flex;align-items:center;justify-content:center;font-size:22px;color:#ccc}
+.fich-obs-title{background:#d0d0d0;text-align:center;font-size:11px;font-weight:700;padding:5px;margin:10px 14px 0;letter-spacing:.04em}
+.fich-obs-body{margin:0 14px;min-height:40px;border:1px solid #ccc;border-top:none;padding:8px;font-size:11px;color:#333}
+.fich-footer-space{height:14px}
+
+/* NAV */
+.bottomnav{background:var(--bg2);border-top:1px solid var(--bdr);display:flex;padding-bottom:env(safe-area-inset-bottom,0);flex-shrink:0}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:9px 0;color:var(--text3);transition:color .15s}
+.nav-item.active{color:var(--accent)}
+.nav-icon{font-size:20px}
+.nav-label{font-size:10px;font-weight:500}
+
+.toast{position:fixed;bottom:76px;left:50%;transform:translateX(-50%) translateY(14px);background:var(--bg2);border:1px solid var(--aborder);border-radius:var(--r);padding:10px 18px;font-size:13px;color:var(--accent);opacity:0;transition:all .27s;z-index:999;white-space:nowrap;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Modal spray */
+.modal-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:1000;align-items:center;justify-content:center;padding:20px}
+.modal-ov.show{display:flex}
+.modal-close{position:absolute;top:14px;right:14px;width:34px;height:34px;background:var(--bg2);border:1px solid var(--bdr2);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:17px;color:var(--text)}
+
+/* Print */
+@media print{
+  body{overflow:visible!important;height:auto!important;background:#fff!important}
+  #app{height:auto!important;overflow:visible!important}
+  .topbar,.bottomnav,.ficha-topbar,.ficha-actions,.toast,.offbanner{display:none!important}
+  .content{overflow:visible!important;padding:0!important;height:auto!important}
+  .screen{display:none!important}
+  #sFicha{display:block!important}
+  #fichaCard{border-radius:0!important}
+  .back,.btn-pdf,.btn-back2{display:none!important}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="offbanner" id="offBanner">⚠ Sin conexión — datos guardados localmente</div>
+
+  <!-- TOPBAR con logos -->
+  <div class="topbar">
+    <!-- Logo INGGEPRO SVG inline -->
+    <svg class="logo-inggepro" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="8" width="24" height="24" rx="3" fill="#f5a800"/>
+      <rect x="3" y="11" width="18" height="18" rx="2" fill="#2d6e2d"/>
+      <text x="12" y="23" text-anchor="middle" font-size="9" font-weight="700" fill="white" font-family="Arial">ING</text>
+      <text x="32" y="18" font-size="9" font-weight="700" fill="#f5a800" font-family="Arial">INGGEPRO</text>
+      <text x="32" y="30" font-size="7" fill="#7a9cc0" font-family="Arial">Ingeniería</text>
+    </svg>
+    <div class="topbar-title">Proyecto UD</div>
+    <!-- Logo Essbio SVG inline -->
+    <svg class="logo-essbio" viewBox="0 0 70 32" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8 4 L28 4 L36 16 L28 28 L8 28 L0 16 Z" fill="#0052a5"/>
+      <text x="18" y="20" text-anchor="middle" font-size="7" font-weight="700" fill="white" font-family="Arial">essbio</text>
+      <text x="48" y="14" font-size="8" font-weight="700" fill="#0052a5" font-family="Arial">Essbio</text>
+      <text x="48" y="24" font-size="6" fill="#0052a5" font-family="Arial">Sanitaria</text>
+    </svg>
+    <div class="conn"><div class="dot live" id="connDot"></div><span id="connLabel">En línea</span></div>
+  </div>
+
+  <div class="content" id="mainContent">
+
+    <!-- ══════════ INICIO / DASHBOARD ══════════ -->
+    <div class="screen active" id="sHome">
+      <div class="dash-greeting">
+        <h2 id="greetTxt">Bienvenido</h2>
+        <p id="greetDate"></p>
+      </div>
+      <div class="dash-stats">
+        <div class="dash-stat col-accent"><div class="ds-n" id="dTotal">0</div><div class="ds-l">Total UD registradas</div></div>
+        <div class="dash-stat col-ok"><div class="ds-n" id="dEjec">0</div><div class="ds-l">Ejecutadas</div></div>
+        <div class="dash-stat col-warn"><div class="ds-n" id="dPend">0</div><div class="ds-l">Pendientes</div></div>
+        <div class="dash-stat col-blue"><div class="ds-n" id="dAnalista">0</div><div class="ds-l">Esperan analista</div></div>
+      </div>
+      <div class="dash-progress">
+        <div class="dp-label"><span>Avance del proyecto</span><span id="dPct">0%</span></div>
+        <div class="dp-bar"><div class="dp-fill" id="dBar" style="width:0%"></div></div>
+      </div>
+      <button class="btn-new" onclick="goForm()">+ Nueva visita / Completar analista</button>
+      <div class="sec-label">Registros recientes</div>
+      <div id="homeList"></div>
+    </div>
+
+    <!-- ══════════ FORMULARIO ══════════ -->
+    <div class="screen" id="sForm">
+      <div class="form-topbar">
+        <div class="back" onclick="goHome()">←</div>
+        <div class="fhead"><h3 id="formTitle">Nueva visita</h3><p id="formSub">Selecciona tu rol</p></div>
+      </div>
+
+      <!-- SELECTOR DE ROL -->
+      <div id="roleStep">
+        <div class="role-selector">
+          <div class="role-card" id="roleTerreno" onclick="selectRole('terreno')">
+            <div class="ri">🚧</div>
+            <h4>Operador terreno</h4>
+            <p>Visita domicilio, registra estado y fotos</p>
+          </div>
+          <div class="role-card" id="roleAnalista" onclick="selectRole('analista')">
+            <div class="ri">🔬</div>
+            <h4>Analista oficina</h4>
+            <p>Revisa video ITV, ingresa hallazgo y diagnóstico</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── FORMULARIO OPERADOR TERRENO ── -->
+      <div id="formTerreno" style="display:none">
+        <!-- Buscar dirección -->
+        <div class="sbox">
+          <div class="sbox-title">🔍 Buscar dirección — autocompleta datos Essbio</div>
+          <div class="sinput-wrap">
+            <input class="sinput" id="t_search" type="text" placeholder="Escribe dirección, ODS o ID..." autocomplete="off" autocorrect="off" spellcheck="false" oninput="onSearch(this.value,'t')">
+            <button class="sclear" id="t_sclear" onclick="clearSearch('t')">✕</button>
+          </div>
+          <div class="sresults" id="t_sresults"></div>
+        </div>
+        <!-- Panel Essbio -->
+        <div class="essbio-panel" id="t_essbio">
+          <div class="ep-title">✅ Datos Essbio — A a J cargados automáticamente</div>
+          <div class="ep-grid">
+            <div class="ef"><div class="el">N° (A)</div><div class="ev" id="t_eb_n">—</div></div>
+            <div class="ef"><div class="el">ODS (H)</div><div class="ev" id="t_eb_ods">—</div></div>
+            <div class="ef"><div class="el">ID Servicio (I)</div><div class="ev" id="t_eb_id">—</div></div>
+            <div class="ef"><div class="el">Zona (B)</div><div class="ev" id="t_eb_zona">—</div></div>
+            <div class="ef"><div class="el">Localidad (C)</div><div class="ev" id="t_eb_loc">—</div></div>
+            <div class="ef"><div class="el">Plan (D)</div><div class="ev" id="t_eb_plan">—</div></div>
+            <div class="ef"><div class="el">Origen (E)</div><div class="ev" id="t_eb_origen">—</div></div>
+            <div class="ef"><div class="el">Recurso (F)</div><div class="ev" id="t_eb_recurso">—</div></div>
+            <div class="ef"><div class="el">Fecha solicitud (G)</div><div class="ev" id="t_eb_fecha">—</div></div>
+            <div class="ef full"><div class="el">Dirección (J)</div><div class="ev" id="t_eb_dir">—</div></div>
+          </div>
+        </div>
+
+        <!-- K: Estado cliente -->
+        <div class="fsec">
+          <div class="fsec-title">K — Estado de cliente</div>
+          <div class="field">
+            <label>Estado de cliente <span class="req">*</span></label>
+            <select id="t_estadoCliente">
+              <option value="">— Seleccionar —</option>
+              <option>Cliente acepta</option>
+              <option>Cliente no acepta</option>
+              <option>No ubicable</option>
+              <option>Sin Morador</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- L M N O P -->
+        <div class="fsec">
+          <div class="fsec-title">L · M · N · O · P — Estado ITV y visita</div>
+          <div class="field">
+            <label>Estado ITV (L) <span class="req">*</span></label>
+            <select id="t_estadoITV">
+              <option value="">— Seleccionar —</option>
+              <option>En proceso</option>
+              <option>Enviado</option>
+              <option>Ejecutado</option>
+              <option>No ejecutado</option>
+              <option>Pendiente</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Fecha ejecución (M) <span class="auto-badge">⚡ automática</span></label>
+            <input type="date" id="t_fechaEjec" readonly>
+          </div>
+          <div class="row2">
+            <div class="field"><label>Año (N)</label><input type="text" id="t_ano" readonly></div>
+            <div class="field"><label>Mes (O)</label><input type="text" id="t_mes" readonly></div>
+          </div>
+          <div class="field"><label>N° Visita (P)</label><input type="number" id="t_nvisita" value="1" min="1"></div>
+        </div>
+
+        <!-- V W X Y Z -->
+        <div class="fsec">
+          <div class="fsec-title">V · W · X · Y · Z — Datos de la UD</div>
+          <div class="field">
+            <label>Ubicación de UD (V)</label>
+            <select id="t_ubicUD">
+              <option value="">— Seleccionar —</option>
+              <option>Blanco</option>
+              <option>Pavimentado</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Materialidad (W)</label>
+            <select id="t_material">
+              <option value="">— Seleccionar —</option>
+              <option>CC</option>
+              <option>HDPE</option>
+            </select>
+          </div>
+          <div class="row2">
+            <div class="field"><label>Largo Shape — X (m)</label><input type="number" id="t_largoShape" placeholder="0.00" step="0.01"></div>
+            <div class="field"><label>Largo UD — Y (m)</label><input type="number" id="t_largoUD" placeholder="0.00" step="0.01"></div>
+          </div>
+          <div class="field"><label>Ubicación falla en metros (Z)</label><input type="text" id="t_ubicFalla" placeholder="Ej: 2,36 - 3,19 - 6,50"></div>
+        </div>
+
+        <!-- Fotos terreno -->
+        <div class="fsec">
+          <div class="fsec-title">📷 Fotos de terreno</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:10px">
+            Foto entorno domicilio + marca spray. Las fotos del hallazgo ITV las agrega el analista en oficina.
+          </div>
+          <!-- Spray referencia -->
+          <div class="spray-ref" onclick="openSprayModal()">
+            <span style="font-size:20px">🎨</span>
+            <p><strong>Ver referencia marca SPRAY</strong><br>Toca para ver el ejemplo de marcado</p>
+            <span style="margin-left:auto;color:var(--accent)">›</span>
+          </div>
+          <div class="field">
+            <label>📷 Foto marca SPRAY realizada</label>
+            <div class="pzone" onclick="document.getElementById('t_sprayInput').click()">
+              <div class="pzi">🎨</div>
+              <div class="pzl">Fotografiar la marca spray</div>
+              <input type="file" id="t_sprayInput" accept="image/*" capture="environment" style="display:none" onchange="handleSinglePhoto(event,'t_spray','t_sprayGrid')">
+            </div>
+            <div class="pgrid" id="t_sprayGrid"></div>
+          </div>
+          <div class="field">
+            <label>🏠 Foto entorno domicilio (panorámica) <span class="req">*</span></label>
+            <div class="pzone req-zone" onclick="document.getElementById('t_panInput').click()">
+              <div class="pzi">🏠</div>
+              <div class="pzl">Fachada completa + número visible</div>
+              <div class="pzr">1 foto obligatoria</div>
+              <input type="file" id="t_panInput" accept="image/*" capture="environment" style="display:none" onchange="handleSinglePhoto(event,'t_panorama','t_panGrid')">
+            </div>
+            <div class="pgrid" id="t_panGrid"></div>
+            <div class="pcnt warn" id="t_panCnt">Sin foto de entorno</div>
+          </div>
+        </div>
+
+        <div class="adnote">
+          <div class="adnote-t">🔒 Columnas AD — AO · Essbio</div>
+          <p>Responsable, Validaciones, Contratista, Monto y Parches los completa Essbio.</p>
+        </div>
+        <button class="btn-save" onclick="saveTerreno()">Guardar visita de terreno</button>
+        <div style="height:20px"></div>
+      </div>
+
+      <!-- ── FORMULARIO ANALISTA ── -->
+      <div id="formAnalista" style="display:none">
+        <!-- Buscar registro existente -->
+        <div class="sbox" style="border-color:var(--pborder)">
+          <div class="sbox-title" style="color:var(--purple)">🔬 Buscar registro de terreno por dirección u ODS</div>
+          <div class="sinput-wrap">
+            <input class="sinput" id="a_search" type="text" placeholder="Escribe dirección o ODS..." autocomplete="off" autocorrect="off" spellcheck="false" oninput="onSearchAnalista(this.value)">
+            <button class="sclear" id="a_sclear" onclick="clearSearchAnalista()">✕</button>
+          </div>
+          <div class="sresults" id="a_sresults"></div>
+        </div>
+        <!-- Panel registro seleccionado -->
+        <div class="essbio-panel" id="a_panel" style="border-color:var(--pborder);background:var(--pdim)">
+          <div class="ep-title" style="color:var(--purple)">✅ Registro seleccionado — completa con datos analista</div>
+          <div class="ep-grid">
+            <div class="ef"><div class="el">Dirección</div><div class="ev" id="a_dir">—</div></div>
+            <div class="ef"><div class="el">ODS</div><div class="ev" id="a_ods">—</div></div>
+            <div class="ef"><div class="el">Estado ITV</div><div class="ev" id="a_itv">—</div></div>
+            <div class="ef"><div class="el">Fecha visita</div><div class="ev" id="a_fecha">—</div></div>
+          </div>
+        </div>
+        <input type="hidden" id="a_recId">
+
+        <!-- Q R S: Hallazgo -->
+        <div class="fsec">
+          <div class="fsec-title purple">Q · R · S — Hallazgo y solución</div>
+          <div class="field">
+            <label>Comentario hallazgo (Q)</label>
+            <textarea id="a_comentHallazgo" placeholder="Observaciones del video ITV..."></textarea>
+          </div>
+          <div class="field">
+            <label>Hallazgo (R) <span class="req-p">*</span></label>
+            <select id="a_hallazgo">
+              <option value="">— Seleccionar hallazgo —</option>
+              <option>Acumulación de Grasa</option>
+              <option>Colapso</option>
+              <option>Defecto de Fabricación</option>
+              <option>Deformación</option>
+              <option>Descople de UD</option>
+              <option>Desnivel Puntual</option>
+              <option>Desgaste Pared Interior</option>
+              <option>Incrustación</option>
+              <option>LVD Deficiente UD</option>
+              <option>Nivel en colector</option>
+              <option>Obstrucción</option>
+              <option>Raíces</option>
+              <option>Reparación Defectuosa</option>
+              <option>Rotura</option>
+              <option>Sin Hallazgo</option>
+              <option>Unión Defectuosa</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Solución / Diagnóstico (S)</label>
+            <select id="a_solucion">
+              <option value="">— Seleccionar —</option>
+              <option>Corte</option>
+              <option>Extracción</option>
+              <option>Improcedente</option>
+              <option>LVD Colector</option>
+              <option>Rehabilitación Puntual CIPP</option>
+              <option>Rehabilitación por Manga</option>
+              <option>Renovación</option>
+              <option>Reparación por Zanja</option>
+              <option>Repaso LVD UD</option>
+              <option>Seguimiento</option>
+              <option>Sin hallazgo</option>
+              <option>Zanja Puntual</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- T U -->
+        <div class="fsec">
+          <div class="fsec-title purple">T · U — Ficha y comentario</div>
+          <div class="field"><label>Ficha (T)</label><input type="text" id="a_ficha" placeholder="N° de ficha"></div>
+          <div class="field"><label>Comentario (U)</label><textarea id="a_comentario" placeholder="Observaciones generales..."></textarea></div>
+        </div>
+
+        <!-- AA AB AC -->
+        <div class="fsec">
+          <div class="fsec-title purple">AA · AB · AC — CIPP y obra</div>
+          <div class="row2">
+            <div class="field"><label>Cantidad CIPP (AA)</label><input type="number" id="a_cantCipp" placeholder="0" min="0"></div>
+            <div class="field"><label>Fecha Obra (AB)</label><input type="date" id="a_fechaObra"></div>
+          </div>
+          <div class="field"><label>Estado CIPP (AC)</label><textarea id="a_estadoCipp" placeholder="Estado y observaciones CIPP..."></textarea></div>
+        </div>
+
+        <!-- Fotos hallazgo ITV — analista -->
+        <div class="fsec">
+          <div class="fsec-title purple">📷 Fotografías del hallazgo ITV</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:10px">Captura de pantalla o foto del monitor con el hallazgo visualizado en el video ITV.</div>
+          <div class="field">
+            <label>Imagen monitor hallazgo 1 <span class="req-p">*</span></label>
+            <div class="pzone" style="border-color:var(--pborder)" onclick="document.getElementById('a_foto1Input').click()">
+              <div class="pzi">📺</div>
+              <div class="pzl">Foto monitor — hallazgo 1</div>
+              <input type="file" id="a_foto1Input" accept="image/*" style="display:none" onchange="handleSinglePhoto(event,'a_foto1','a_foto1Grid')">
+            </div>
+            <div class="pgrid" id="a_foto1Grid"></div>
+          </div>
+          <div class="field">
+            <label>Imagen monitor hallazgo 2 <span class="req-p">*</span></label>
+            <div class="pzone" style="border-color:var(--pborder)" onclick="document.getElementById('a_foto2Input').click()">
+              <div class="pzi">📺</div>
+              <div class="pzl">Foto monitor — hallazgo 2</div>
+              <input type="file" id="a_foto2Input" accept="image/*" style="display:none" onchange="handleSinglePhoto(event,'a_foto2','a_foto2Grid')">
+            </div>
+            <div class="pgrid" id="a_foto2Grid"></div>
+          </div>
+        </div>
+
+        <button class="btn-save purple" onclick="saveAnalista()">Guardar datos analista</button>
+        <div style="height:20px"></div>
+      </div>
+    </div>
+
+    <!-- ══════════ REGISTROS ══════════ -->
+    <div class="screen" id="sRecs">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <h2 style="font-size:18px;font-weight:600">Registros</h2>
+        <span style="font-size:12px;color:var(--text2);font-family:'DM Mono',monospace" id="recCount"></span>
+      </div>
+      <button style="width:100%;background:var(--bg3);color:var(--text);border:1px solid var(--aborder);border-radius:var(--r);padding:12px;font-size:14px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px" onclick="exportCSV()">⬇ Exportar a Excel / CSV</button>
+      <div id="allRecs"></div>
+    </div>
+
+    <!-- ══════════ FICHA PDF ══════════ -->
+    <div class="screen" id="sFicha">
+      <div class="ficha-topbar">
+        <div class="back" onclick="goRecs()">←</div>
+        <div class="fhead"><h3>Ficha ITV</h3><p>Formato Essbio — lista para PDF</p></div>
+      </div>
+      <div class="ficha-actions">
+        <button class="btn-pdf" onclick="window.print()">⬇ Descargar PDF</button>
+        <button class="btn-back2" onclick="goRecs()">Volver a registros</button>
+      </div>
+      <div id="fichaCard"></div>
+      <div class="fich-footer-space"></div>
+    </div>
+
+  </div>
+
+  <nav class="bottomnav">
+    <div class="nav-item active" id="nav0" onclick="switchNav(0)"><div class="nav-icon">🏠</div><div class="nav-label">Inicio</div></div>
+    <div class="nav-item" id="nav1" onclick="switchNav(1)"><div class="nav-icon">➕</div><div class="nav-label">Nueva</div></div>
+    <div class="nav-item" id="nav2" onclick="switchNav(2)"><div class="nav-icon">📋</div><div class="nav-label">Registros</div></div>
+  </nav>
+  <div class="toast" id="toast"></div>
+</div>
+
+<!-- Modal spray -->
+<div class="modal-ov" id="sprayModal" onclick="closeSprayModal()">
+  <div class="modal-close" onclick="closeSprayModal()">✕</div>
+  <div onclick="event.stopPropagation()" style="text-align:center;max-width:320px">
+    <svg viewBox="0 0 320 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;border-radius:12px;background:#1a3050">
+      <rect width="320" height="260" fill="#1a3050"/>
+      <rect x="0" y="160" width="320" height="100" fill="#2a3f5f"/>
+      <line x1="0" y1="160" x2="320" y2="160" stroke="#3a5a7a" stroke-width="2"/>
+      <ellipse cx="160" cy="175" rx="28" ry="10" fill="#0d1f35" stroke="#00c896" stroke-width="2"/>
+      <text x="160" y="179" text-anchor="middle" font-size="9" fill="#00c896" font-family="DM Mono">UD</text>
+      <defs><marker id="ma" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#f59e0b"/></marker></defs>
+      <line x1="160" y1="155" x2="160" y2="112" stroke="#f59e0b" stroke-width="2" marker-end="url(#ma)"/>
+      <g transform="translate(145,84)"><line x1="0" y1="0" x2="26" y2="26" stroke="#ef4444" stroke-width="5" stroke-linecap="round"/><line x1="26" y1="0" x2="0" y2="26" stroke="#ef4444" stroke-width="5" stroke-linecap="round"/></g>
+      <circle cx="158" cy="97" r="20" fill="none" stroke="#ef4444" stroke-width="3" stroke-dasharray="5,3"/>
+      <text x="158" y="74" text-anchor="middle" font-size="11" fill="#ef4444" font-family="DM Sans" font-weight="600">MARCA SPRAY</text>
+      <text x="158" y="228" text-anchor="middle" font-size="10" fill="#7a9cc0" font-family="DM Sans">Marcar antes de fotografiar</text>
+    </svg>
+    <div style="font-size:12px;color:#7a9cc0;margin-top:10px;line-height:1.5">Marca en cruz con spray sobre la ubicación de la UD.<br>Fotografiar antes de dejar el punto.</div>
+  </div>
+</div>
+
+<script>
+/* ═══ DATOS ESSBIO ═══ */
+const ESSBIO=[
+  {n:"1",zona:"COSTA NORTE",localidad:"CONCEPCION",plan:"Plan UD",origen:"Emergencia",recurso:"Simple",fechaSolicitud:"2026-04-06",ods:"O5321333-D",idServicio:"1648112",direccion:"COLO COLO 917 (CONCEPCION)"},
+  {n:"2",zona:"COSTA NORTE",localidad:"CONCEPCION",plan:"Plan UD",origen:"Emergencia",recurso:"Simple",fechaSolicitud:"2026-04-06",ods:"O5320905-D",idServicio:"2182597",direccion:"AV.ANDALIEN 1106 (CONCEPCION)"},
+  {n:"3",zona:"COSTA NORTE",localidad:"CONCEPCION",plan:"Plan UD",origen:"Emergencia",recurso:"Simple",fechaSolicitud:"2026-04-06",ods:"O5318986-D",idServicio:"2514789",direccion:"GENERAL GOROSTIAGA 1430 (CONCEPCION)"},
+  {n:"4",zona:"COSTA NORTE",localidad:"CHIGUAYANTE",plan:"Plan UD",origen:"Emergencia",recurso:"Simple",fechaSolicitud:"2026-04-06",ods:"O5325632-D",idServicio:"1449235",direccion:"VIDELA 437"},
+  {n:"5",zona:"COSTA NORTE",localidad:"TALCAHUANO",plan:"Plan UD",origen:"Emergencia",recurso:"Simple",fechaSolicitud:"2026-04-06",ods:"O5321410-D",idServicio:"1774980",direccion:"CHEPICA 7083 (TALCAHUANO)"},
+  {n:"6",zona:"COSTA NORTE",localidad:"CONCEPCION",plan:"Plan UD",origen:"Emergencia",recurso:"Simple",fechaSolicitud:"2026-04-06",ods:"O5320726-D",idServicio:"1180456",direccion:"MIRAFLORES 577 (CONCEPCION)"},
+  {n:"7",zona:"COSTA NORTE",localidad:"TALCAHUANO",plan:"Plan UD",origen:"Emergencia",recurso:"Simple",fechaSolicitud:"2026-04-06",ods:"O5318074-D",idServicio:"2030032",direccion:"LA SERENA 152 (TALCAHUANO)"},
+  {n:"8",zona:"COSTA NORTE",localidad:"CONCEPCION",plan:"Plan UD",origen:"Emergencia",recurso:"Simple",fechaSolicitud:"2026-04-06",ods:"O5332558-D",idServicio:"4027853",direccion:"COSTANERA 1024 (CONCEPCION)"}
+];
+
+/* ═══ STORAGE ═══ */
+const KEY='ud_v5';
+const getRecs=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'[]');}catch{return[];}};
+const setRecs=a=>localStorage.setItem(KEY,JSON.stringify(a));
+
+/* ═══ FOTOS POR KEY ═══ */
+const photoStore={};
+function handleSinglePhoto(e,key,gridId){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{photoStore[key]=ev.target.result;renderSinglePhoto(key,gridId);};
+  r.readAsDataURL(f);
+}
+function renderSinglePhoto(key,gridId){
+  const g=document.getElementById(gridId);
+  if(!g)return;
+  const p=photoStore[key];
+  g.innerHTML=p?`<div class="pwrap"><img class="pthumb" src="${p}"><div class="pdel" onclick="delPhoto('${key}','${gridId}')">×</div></div><div style="font-size:11px;color:var(--ok);align-self:flex-end;margin-bottom:4px">✓</div>`:'';
+  // update panorama counter
+  if(key==='t_panorama'){const c=document.getElementById('t_panCnt');if(c){c.textContent=p?'✓ Foto entorno registrada':'Sin foto de entorno';c.className='pcnt '+(p?'ok':'warn');}}
+}
+function delPhoto(key,gridId){delete photoStore[key];renderSinglePhoto(key,gridId);const inp=document.querySelector(`[id$="${key.split('_')[1]}Input"]`);if(inp)inp.value='';}
+
+/* ═══ BUSCADOR TERRENO ═══ */
+let selectedEssbio=null;
+function onSearch(val,prefix){
+  const q=val.trim().toUpperCase();
+  const clr=document.getElementById(`${prefix}_sclear`);
+  const box=document.getElementById(`${prefix}_sresults`);
+  if(clr)clr.style.display=val?'block':'none';
+  if(q.length<2){box.style.display='none';return;}
+  const matches=ESSBIO.filter(d=>d.direccion.toUpperCase().includes(q)||d.ods.toUpperCase().includes(q)||d.idServicio.includes(q));
+  if(!matches.length){box.innerHTML=`<div class="sno">Sin resultados para "${val}"</div>`;box.style.display='block';return;}
+  box.innerHTML=matches.map(d=>`<div class="sri" onclick="selectEssbio(${d.n})"><div class="sri-dir">${d.direccion}</div><div class="sri-meta">${d.ods} · ${d.localidad} · ID ${d.idServicio}</div></div>`).join('');
+  box.style.display='block';
+}
+function selectEssbio(n){
+  const d=ESSBIO.find(x=>x.n==n);if(!d)return;
+  selectedEssbio=d;
+  document.getElementById('t_search').value=d.direccion;
+  document.getElementById('t_sresults').style.display='none';
+  document.getElementById('t_sclear').style.display='block';
+  ['n','ods','id','zona','loc','plan','origen','recurso','fecha','dir'].forEach((k,i)=>{
+    const vals=[d.n,d.ods,d.idServicio,d.zona,d.localidad,d.plan,d.origen,d.recurso,fmtDate(d.fechaSolicitud),d.direccion];
+    document.getElementById(`t_eb_${k}`).textContent=vals[i];
+  });
+  document.getElementById('t_essbio').classList.add('show');
+  toast('✓ Datos Essbio cargados');
+}
+function clearSearch(prefix){
+  const inp=document.getElementById(`${prefix}_search`);
+  const res=document.getElementById(`${prefix}_sresults`);
+  const clr=document.getElementById(`${prefix}_sclear`);
+  if(inp)inp.value='';if(res)res.style.display='none';if(clr)clr.style.display='none';
+  if(prefix==='t'){selectedEssbio=null;document.getElementById('t_essbio').classList.remove('show');}
+}
+
+/* ═══ BUSCADOR ANALISTA ═══ */
+let selectedRec=null;
+function onSearchAnalista(val){
+  const q=val.trim().toUpperCase();
+  const clr=document.getElementById('a_sclear');
+  const box=document.getElementById('a_sresults');
+  if(clr)clr.style.display=val?'block':'none';
+  if(q.length<2){box.style.display='none';return;}
+  const recs=getRecs().filter(r=>!r.analista); // solo los sin analista
+  const matches=recs.filter(r=>(r.eb_dir||'').toUpperCase().includes(q)||(r.eb_ods||'').toUpperCase().includes(q));
+  if(!matches.length){box.innerHTML=`<div class="sno">Sin registros pendientes de analista para "${val}"</div>`;box.style.display='block';return;}
+  box.innerHTML=matches.map(r=>`<div class="sri" onclick="selectRecAnalista('${r._id}')"><div class="sri-dir">${r.eb_dir||r.eb_ods}</div><div class="sri-meta">${r.eb_ods||''} · ${r.eb_loc||''} · ${fmtDate(r.fechaEjecucion)}</div></div>`).join('');
+  box.style.display='block';
+}
+function selectRecAnalista(id){
+  const r=getRecs().find(x=>x._id===id);if(!r)return;
+  selectedRec=r;
+  document.getElementById('a_search').value=r.eb_dir||r.eb_ods;
+  document.getElementById('a_sresults').style.display='none';
+  document.getElementById('a_sclear').style.display='block';
+  document.getElementById('a_dir').textContent=r.eb_dir||'—';
+  document.getElementById('a_ods').textContent=r.eb_ods||'—';
+  document.getElementById('a_itv').textContent=r.estadoITV||'—';
+  document.getElementById('a_fecha').textContent=fmtDate(r.fechaEjecucion);
+  document.getElementById('a_recId').value=id;
+  document.getElementById('a_panel').classList.add('show');
+  toast('✓ Registro seleccionado');
+}
+function clearSearchAnalista(){
+  document.getElementById('a_search').value='';
+  document.getElementById('a_sresults').style.display='none';
+  document.getElementById('a_sclear').style.display='none';
+  document.getElementById('a_panel').classList.remove('show');
+  selectedRec=null;
+}
+
+/* ═══ ROL ═══ */
+let currentRole=null;
+function selectRole(role){
+  currentRole=role;
+  document.getElementById('roleTerreno').className='role-card'+(role==='terreno'?' selected-terreno':'');
+  document.getElementById('roleAnalista').className='role-card'+(role==='analista'?' selected-analista':'');
+  document.getElementById('formTerreno').style.display=role==='terreno'?'block':'none';
+  document.getElementById('formAnalista').style.display=role==='analista'?'block':'none';
+  document.getElementById('formTitle').textContent=role==='terreno'?'Operador terreno':'Analista oficina';
+  document.getElementById('formSub').textContent=role==='terreno'?'Visita y datos UD':'Hallazgo, diagnóstico y fotos ITV';
+}
+
+/* ═══ GUARDAR TERRENO ═══ */
+function saveTerreno(){
+  if(!selectedEssbio){toast('⚠ Selecciona una dirección primero');return;}
+  const ec=document.getElementById('t_estadoCliente').value;
+  const itv=document.getElementById('t_estadoITV').value;
+  if(!ec){toast('⚠ Selecciona el estado de cliente');return;}
+  if(!itv){toast('⚠ Selecciona el estado ITV');return;}
+  if(!photoStore['t_panorama']){toast('⚠ Falta la foto panorámica del entorno');return;}
+  const g=id=>document.getElementById(id)?.value||'';
+  const fechaEjec=g('t_fechaEjec');
+  const rec={
+    _id:Date.now().toString(),_ts:new Date().toISOString(),
+    rol:'terreno',analista:null,
+    eb_n:selectedEssbio.n,eb_ods:selectedEssbio.ods,eb_id:selectedEssbio.idServicio,
+    eb_zona:selectedEssbio.zona,eb_loc:selectedEssbio.localidad,eb_plan:selectedEssbio.plan,
+    eb_origen:selectedEssbio.origen,eb_recurso:selectedEssbio.recurso,
+    eb_fecha:fmtDate(selectedEssbio.fechaSolicitud),eb_dir:selectedEssbio.direccion,
+    estadoCliente:ec,estadoITV:itv,
+    fechaEjecucion:fechaEjec,
+    ano:fechaEjec?new Date(fechaEjec+'T12:00').getFullYear():'',
+    mes:fechaEjec?new Date(fechaEjec+'T12:00').getMonth()+1:'',
+    nvisita:g('t_nvisita'),
+    ubicUD:g('t_ubicUD'),materialidad:g('t_material'),
+    largoShape:g('t_largoShape'),largoUD:g('t_largoUD'),ubicFalla:g('t_ubicFalla'),
+    fotoSpray:photoStore['t_spray']||null,
+    fotoPanorama:photoStore['t_panorama']||null,
+  };
+  const recs=getRecs();recs.push(rec);setRecs(recs);
+  syncToSheets(rec);
+  toast('✓ Visita de terreno guardada');
+  setTimeout(()=>goHome(),600);
+}
+
+/* ═══ GUARDAR ANALISTA ═══ */
+function saveAnalista(){
+  const id=document.getElementById('a_recId').value;
+  if(!id){toast('⚠ Selecciona un registro primero');return;}
+  const hal=document.getElementById('a_hallazgo').value;
+  if(!hal){toast('⚠ Selecciona el hallazgo');return;}
+  if(!photoStore['a_foto1']){toast('⚠ Falta imagen monitor hallazgo 1');return;}
+  if(!photoStore['a_foto2']){toast('⚠ Falta imagen monitor hallazgo 2');return;}
+  const g=id2=>document.getElementById(id2)?.value||'';
+  const recs=getRecs();
+  const idx=recs.findIndex(r=>r._id===id);
+  if(idx<0){toast('⚠ Registro no encontrado');return;}
+  recs[idx].analista={
+    _ts:new Date().toISOString(),
+    comentHallazgo:g('a_comentHallazgo'),hallazgo:hal,solucion:g('a_solucion'),
+    ficha:g('a_ficha'),comentario:g('a_comentario'),
+    cantCipp:g('a_cantCipp'),fechaObra:g('a_fechaObra'),estadoCipp:g('a_estadoCipp'),
+    fotoMonitor1:photoStore['a_foto1']||null,
+    fotoMonitor2:photoStore['a_foto2']||null,
+  };
+  setRecs(recs);
+  syncToSheets(recs[idx]);
+  toast('✓ Datos analista guardados — ficha lista');
+  setTimeout(()=>{goRecs();},600);
+}
+
+/* ═══ SYNC GOOGLE SHEETS ═══ */
+const SHEETS_URL=''; // <-- PEGAR AQUÍ la URL del Google Apps Script Web App
+function syncToSheets(rec){
+  if(!SHEETS_URL)return;
+  const flat={...rec,...(rec.analista||{})};
+  delete flat.fotoSpray;delete flat.fotoPanorama;delete flat.fotoMonitor1;delete flat.fotoMonitor2;
+  fetch(SHEETS_URL,{method:'POST',body:JSON.stringify(flat),headers:{'Content-Type':'application/json'}}).catch(()=>{});
+}
+
+/* ═══ FICHA PDF ═══ */
+function openFicha(id){
+  const rec=getRecs().find(r=>r._id===id);
+  if(!rec||!rec.analista){toast('⚠ Faltan datos del analista para generar la ficha');return;}
+  renderFicha(rec);
+  showScreen('sFicha');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+}
+
+function renderFicha(r){
+  const a=r.analista||{};
+  const fotoEntorno=r.fotoPanorama?`<img class="fich-photo-img" src="${r.fotoPanorama}">`:`<div class="fich-photo-empty">🏠</div>`;
+  const fotoSpray=r.fotoSpray?`<img class="fich-photo-img" src="${r.fotoSpray}">`:`<div class="fich-photo-empty">🎨</div>`;
+  const fotoMon1=a.fotoMonitor1?`<img class="fich-photo-img" src="${a.fotoMonitor1}">`:`<div class="fich-photo-empty">📺</div>`;
+  const fotoMon2=a.fotoMonitor2?`<img class="fich-photo-img" src="${a.fotoMonitor2}">`:`<div class="fich-photo-empty">📺</div>`;
+
+  document.getElementById('fichaCard').innerHTML=`
+  <div class="fich-header">
+    <svg class="fich-logo-ing" viewBox="0 0 110 44" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="6" width="30" height="32" rx="3" fill="#f5a800"/>
+      <rect x="4" y="10" width="22" height="24" rx="2" fill="#2d6e2d"/>
+      <text x="15" y="25" text-anchor="middle" font-size="8" font-weight="700" fill="white" font-family="Arial">ING</text>
+      <text x="38" y="22" font-size="10" font-weight="700" fill="#f5a800" font-family="Arial">INGGEPRO</text>
+      <text x="38" y="35" font-size="7" fill="#555" font-family="Arial">Ingeniería</text>
+    </svg>
+    <div class="fich-titulo">FICHA DE INSPECCION TELEVISIVA DE UNIONES DOMICILIARIAS</div>
+    <svg class="fich-logo-ess" viewBox="0 0 80 44" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 4 L34 4 L42 22 L34 40 L10 40 L2 22 Z" fill="#0052a5"/>
+      <text x="22" y="25" text-anchor="middle" font-size="8" font-weight="700" fill="white" font-family="Arial">essbio</text>
+      <text x="54" y="20" font-size="10" font-weight="700" fill="#0052a5" font-family="Arial">Essbio</text>
+      <text x="54" y="33" font-size="7" fill="#0052a5" font-family="Arial">Sanitaria</text>
+    </svg>
+  </div>
+
+  <div class="fich-section">
+    <div class="fich-sec-title">ANTECEDENTES Y REVISIÓN</div>
+    <div class="fich-grid2">
+      <div>
+        <div class="fich-row"><span class="fich-lbl">ID de servicio</span><span class="fich-val">${r.eb_id||'—'}</span></div>
+        <div class="fich-row"><span class="fich-lbl">Region</span><span class="fich-val">VIII — Biobío</span></div>
+        <div class="fich-row"><span class="fich-lbl">Zona</span><span class="fich-val">${r.eb_zona||'—'}</span></div>
+        <div class="fich-row"><span class="fich-lbl">Localidad</span><span class="fich-val">${r.eb_loc||'—'}</span></div>
+        <div class="fich-row"><span class="fich-lbl">Dirección</span><span class="fich-val">${r.eb_dir||'—'}</span></div>
+        <div class="fich-row"><span class="fich-lbl">Materialidad</span><span class="fich-val">${r.materialidad||'—'}</span></div>
+        <div class="fich-row"><span class="fich-lbl">Diametro (mm)</span><span class="fich-val">—</span></div>
+      </div>
+      <div>
+        <div class="fich-row"><span class="fich-lbl">Fecha ITV</span><span class="fich-val">${fmtDate(r.fechaEjecucion)}</span></div>
+        <div class="fich-row"><span class="fich-lbl" style="font-weight:700">Longitud total (m)</span><span class="fich-val">${r.largoShape||'—'}</span></div>
+        <div class="fich-row"><span class="fich-lbl" style="font-weight:700">Longitud ITV (m)</span><span class="fich-val">${r.largoUD||'—'}</span></div>
+        <div class="fich-row"><span class="fich-lbl">Tipo de terreno</span><span class="fich-val">${r.ubicUD||'—'}</span></div>
+        <div class="fich-row"><span class="fich-lbl">Hallazgo</span><span class="fich-val">${a.hallazgo||'—'}</span></div>
+        <div class="fich-row"><span class="fich-lbl">Ubicación hallazgo</span><span class="fich-val">${r.ubicFalla||'—'}</span></div>
+        <div class="fich-row"><span class="fich-lbl">Solución</span><span class="fich-val">${a.solucion||'—'}</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fich-section">
+    <div class="fich-photos-title">RESPALDO VISUAL DE TRAMO REVISADO</div>
+    <div class="fich-photos-sub">Fotografías de la inspección realizada y observaciones encontradas</div>
+    <div class="fich-photos-grid">
+      <div class="fich-photo-box">
+        <div class="fich-photo-label">Entorno de domicilio</div>
+        ${fotoEntorno}
+      </div>
+      <div class="fich-photo-box">
+        <div class="fich-photo-label">Marca de hallazgo detectado</div>
+        ${fotoSpray}
+      </div>
+      <div class="fich-photo-box">
+        <div class="fich-photo-label">Imagen monitor hallazgo 1</div>
+        ${fotoMon1}
+      </div>
+      <div class="fich-photo-box">
+        <div class="fich-photo-label">Imagen monitor hallazgo 2</div>
+        ${fotoMon2}
+      </div>
+    </div>
+  </div>
+
+  <div class="fich-obs-title">Observaciones puntuales de trabajos de ITV</div>
+  <div class="fich-obs-body">${a.comentario||a.comentHallazgo||''}</div>
+  <div class="fich-footer-space"></div>`;
+}
+
+/* ═══ HOME / DASHBOARD ═══ */
+function renderHome(){
+  const h=new Date().getHours();
+  document.getElementById('greetTxt').textContent=h<12?'Buenos días':h<19?'Buenas tardes':'Buenas noches';
+  document.getElementById('greetDate').textContent=new Date().toLocaleDateString('es-CL',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const recs=getRecs(),today=todayISO();
+  const ejec=recs.filter(r=>r.estadoITV==='Ejecutado').length;
+  const pend=recs.filter(r=>!r.estadoITV||r.estadoITV==='Pendiente'||r.estadoITV==='En proceso').length;
+  const sinAnalista=recs.filter(r=>!r.analista).length;
+  const pct=recs.length?Math.round(ejec/recs.length*100):0;
+  document.getElementById('dTotal').textContent=recs.length;
+  document.getElementById('dEjec').textContent=ejec;
+  document.getElementById('dPend').textContent=pend;
+  document.getElementById('dAnalista').textContent=sinAnalista;
+  document.getElementById('dPct').textContent=pct+'%';
+  document.getElementById('dBar').style.width=pct+'%';
+  const list=document.getElementById('homeList');
+  if(!recs.length){list.innerHTML=`<div class="empty-state"><div class="ei">📋</div><p>Sin registros aún.<br>Toca "Nueva visita" para comenzar.</p></div>`;return;}
+  list.innerHTML=[...recs].reverse().slice(0,10).map(r=>{
+    let pc='pill-pend',pt=r.estadoITV||'Pendiente';
+    if(r.estadoITV==='Ejecutado')pc='pill-ok';
+    else if(r.estadoCliente==='Sin Morador'){pc='pill-grey';pt='Sin morador';}
+    else if(r.estadoITV==='No ejecutado')pc='pill-no';
+    const fichaOk=r.analista&&r.analista.hallazgo;
+    const dir=(r.eb_dir&&r.eb_dir!=='—')?r.eb_dir:(r.eb_ods||'(Sin dirección)');
+    return `<div class="rec-card">
+      <div class="rc-head"><div class="rc-dir">${dir}</div><span class="pill ${pc}">${pt}</span></div>
+      <div class="rc-meta">${r.eb_zona||''} · ${r.eb_loc||''} · ${fmtDate(r.fechaEjecucion)}</div>
+      <div class="rc-tags">
+        ${r.analista?.hallazgo?`<span class="tag tag-w">${r.analista.hallazgo}</span>`:'<span class="tag tag-p">Pendiente analista</span>'}
+        ${r.analista?.solucion?`<span class="tag tag-b">${r.analista.solucion}</span>`:''}
+        ${fichaOk?`<span class="tag tag-g">Ficha lista</span>`:''}
+      </div>
+      <div class="rc-actions">
+        ${!r.analista?`<div class="rc-btn rc-btn-analista" onclick="goAnalista('${r._id}')">🔬 Completar analista</div>`:''}
+        <div class="rc-btn rc-btn-ficha" onclick="openFicha('${r._id}')" ${!fichaOk?'style="opacity:.4;cursor:not-allowed"':''}>📄 Ver / PDF ficha</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function goAnalista(id){
+  selectRole('analista');
+  showScreen('sForm');switchNav(1);
+  setTimeout(()=>{
+    const r=getRecs().find(x=>x._id===id);if(!r)return;
+    document.getElementById('a_search').value=r.eb_dir||r.eb_ods;
+    selectRecAnalista(id);
+  },100);
+}
+
+/* ═══ REGISTROS ═══ */
+function renderRecs(){
+  const recs=getRecs();
+  document.getElementById('recCount').textContent=recs.length+' registros';
+  const list=document.getElementById('allRecs');
+  if(!recs.length){list.innerHTML=`<div class="empty-state"><div class="ei">📋</div><p>No hay registros.</p></div>`;return;}
+  list.innerHTML=[...recs].reverse().map(r=>{
+    const dir=(r.eb_dir&&r.eb_dir!=='—')?r.eb_dir:(r.eb_ods||'(Sin dirección)');
+    const fichaOk=r.analista&&r.analista.hallazgo;
+    return `<div class="rec-card">
+      <div class="rc-head"><div class="rc-dir">${dir}</div></div>
+      <div class="rc-meta">${r.eb_zona||''} · ${r.eb_loc||''} · Visita ${r.nvisita||1} · ${fmtDate(r.fechaEjecucion)}</div>
+      <div class="rc-tags">
+        ${r.estadoITV?`<span class="tag tag-g">${r.estadoITV}</span>`:''}
+        ${r.analista?.hallazgo?`<span class="tag tag-w">${r.analista.hallazgo}</span>`:'<span class="tag tag-p">Sin analista</span>'}
+        ${r.analista?.solucion?`<span class="tag tag-b">${r.analista.solucion}</span>`:''}
+      </div>
+      <div class="rc-actions">
+        ${!r.analista?`<div class="rc-btn rc-btn-analista" onclick="goAnalista('${r._id}')">🔬 Analista</div>`:''}
+        <div class="rc-btn rc-btn-ficha" onclick="openFicha('${r._id}')" ${!fichaOk?'style="opacity:.4;cursor:not-allowed"':''}>📄 Ficha PDF</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ═══ EXPORT CSV ═══ */
+function exportCSV(){
+  const recs=getRecs();
+  if(!recs.length){toast('Sin registros');return;}
+  const H=['N°','ODS','ID Servicio','Zona','Localidad','Plan','Origen','Recurso','Fecha Solicitud','Dirección','K-Estado Cliente','L-Estado ITV','M-Fecha Ejecución','N-Año','O-Mes','P-N° Visita','Q-Coment.Hallazgo','R-Hallazgo','S-Solución','T-Ficha','U-Comentario','V-Ubic.UD','W-Materialidad','X-Largo Shape','Y-Largo UD','Z-Ubic.Falla','AA-Cant.CIPP','AB-Fecha Obra','AC-Estado CIPP','Foto Spray','Foto Panorámica','Foto Monitor 1','Foto Monitor 2','Fecha Registro'];
+  const rows=recs.map(r=>{const a=r.analista||{};return[r.eb_n,r.eb_ods,r.eb_id,r.eb_zona,r.eb_loc,r.eb_plan,r.eb_origen,r.eb_recurso,r.eb_fecha,r.eb_dir,r.estadoCliente,r.estadoITV,r.fechaEjecucion,r.ano,r.mes,r.nvisita,a.comentHallazgo,a.hallazgo,a.solucion,a.ficha,a.comentario,r.ubicUD,r.materialidad,r.largoShape,r.largoUD,r.ubicFalla,a.cantCipp,a.fechaObra,a.estadoCipp,r.fotoSpray?'Sí':'No',r.fotoPanorama?'Sí':'No',a.fotoMonitor1?'Sí':'No',a.fotoMonitor2?'Sí':'No',r._ts?.slice(0,10)].map(v=>`"${(v??'').toString().replace(/"/g,'""')}"`)});
+  const csv=[H.map(h=>`"${h}"`).join(','),...rows.map(r=>r.join(','))].join('\r\n');
+  const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=`ProyectoUD_${todayISO()}.csv`;a.click();URL.revokeObjectURL(url);
+  toast('✓ Archivo descargado');
+}
+
+/* ═══ UTILS ═══ */
+function fmtDate(iso){if(!iso||iso==='—')return'—';const p=iso.split('-');return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:iso;}
+function todayISO(){const d=new Date();return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600);}
+function openSprayModal(){document.getElementById('sprayModal').classList.add('show');}
+function closeSprayModal(){document.getElementById('sprayModal').classList.remove('show');}
+
+/* ═══ NAV ═══ */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById('mainContent').scrollTop=0;
+}
+function goHome(){showScreen('sHome');switchNav(0);renderHome();}
+function goRecs(){showScreen('sRecs');switchNav(2);renderRecs();}
+function goForm(){
+  currentRole=null;
+  document.getElementById('roleTerreno').className='role-card';
+  document.getElementById('roleAnalista').className='role-card';
+  document.getElementById('formTerreno').style.display='none';
+  document.getElementById('formAnalista').style.display='none';
+  document.getElementById('formTitle').textContent='Nueva visita';
+  document.getElementById('formSub').textContent='Selecciona tu rol';
+  // reset terreno
+  clearSearch('t');
+  ['t_estadoCliente','t_estadoITV','t_ubicUD','t_material'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['t_largoShape','t_largoUD','t_ubicFalla','t_nvisita'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=id==='t_nvisita'?1:'';});
+  ['t_spray','t_panorama','a_foto1','a_foto2'].forEach(k=>{delete photoStore[k];});
+  ['t_sprayGrid','t_panGrid','a_foto1Grid','a_foto2Grid'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='';});
+  const today=todayISO();
+  document.getElementById('t_fechaEjec').value=today;
+  document.getElementById('t_ano').value=new Date().getFullYear();
+  document.getElementById('t_mes').value=new Date().getMonth()+1;
+  // reset analista
+  clearSearchAnalista();
+  ['a_comentHallazgo','a_hallazgo','a_solucion','a_ficha','a_comentario','a_cantCipp','a_fechaObra','a_estadoCipp'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  showScreen('sForm');switchNav(1);
+}
+function switchNav(i){
+  document.querySelectorAll('.nav-item').forEach((n,j)=>n.classList.toggle('active',i===j));
+  if(i===0){showScreen('sHome');renderHome();}
+  if(i===1)goForm();
+  if(i===2){showScreen('sRecs');renderRecs();}
+}
+
+/* ═══ CONECTIVIDAD ═══ */
+function updateConn(){
+  const on=navigator.onLine;
+  document.getElementById('connDot').className='dot '+(on?'live':'off');
+  document.getElementById('connLabel').textContent=on?'En línea':'Sin conexión';
+  document.getElementById('offBanner').classList.toggle('show',!on);
+}
+window.addEventListener('online',updateConn);
+window.addEventListener('offline',updateConn);
+updateConn();
+
+if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+renderHome();
+</script>
+</body>
+</html>
